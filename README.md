@@ -6,7 +6,7 @@ How likely is a delay on the Toronto subway, at this station, at this hour, in t
 
 This project uses every delay the TTC logged from January 2023 to September 2026 (97,227 incidents, City of Toronto Open Data) plus hourly Toronto weather (Open-Meteo) to find out where and when delays happen, and to predict the risk of a delay of 5 minutes or more.
 
-**Try it:** pick a station, day, hour and weather and see the delay risk: `streamlit run app/app.py` (live link coming soon).
+**[▶ Try the live app](https://ttc-delay-risk-hidaya.streamlit.app/)**: pick a station, day, hour and weather and see the delay risk. pick a station, day, hour and weather, and see the delay risk: `streamlit run app/app.py` (live link coming soon).
 
 ## First findings
 

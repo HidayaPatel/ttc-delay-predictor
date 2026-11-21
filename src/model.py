@@ -4,7 +4,7 @@ One row = one station x one passenger-service hour. Target = 1 if that station l
 a delay of 5+ minutes in that hour (planned closures excluded).
 
 Honest test: train on the past, test on a later year the model never saw.
-Usage: python src/model.py [train_end_year] [test_year]   (default 2024 2025)
+Usage: python src/model.py [train_end_year] [test_year]   (default 2025 2026)
 """
 import json
 import sys
@@ -21,8 +21,8 @@ from sklearn.pipeline import make_pipeline
 from sklearn.preprocessing import OneHotEncoder, StandardScaler
 
 ROOT = Path(__file__).resolve().parent.parent
-TRAIN_END = int(sys.argv[1]) if len(sys.argv) > 1 else 2024
-TEST_YEAR = int(sys.argv[2]) if len(sys.argv) > 2 else 2025
+TRAIN_END = int(sys.argv[1]) if len(sys.argv) > 1 else 2025
+TEST_YEAR = int(sys.argv[2]) if len(sys.argv) > 2 else 2026
 
 SRT = {"LAWRENCE EAST", "ELLESMERE", "MIDLAND", "SCARBOROUGH CENTRE", "MCCOWAN"}  # Line 3 closed July 2023
 CAT = ["station", "line", "weekday", "hour", "month"]

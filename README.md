@@ -4,7 +4,7 @@ How likely is a delay on the Toronto subway, at this station, at this hour, in t
 
 This project uses every delay the TTC logged from January 2023 to September 2026 (97,227 incidents, City of Toronto Open Data) plus hourly Toronto weather (Open-Meteo) to find out where and when delays happen, and to predict the risk of a delay of 5 minutes or more.
 
-**Status: in progress.** Data cleaning and exploration are done; the model and app are next.
+**Status: in progress.** Data cleaning, exploration and a first model are done; the app is next.
 
 ## First findings
 
@@ -16,6 +16,30 @@ This project uses every delay the TTC logged from January 2023 to September 2026
 - **Weather matters less than expected:** rain barely changes the delay rate (+4%); heavy snow (+37%) and deep cold (+31%) raise it, though heavy-snow hours are rare (41 hours).
 
 More charts are in [`figures/`](figures/).
+
+## The model
+
+**Question:** at this station, in this hour, will there be a delay of 5+ minutes?
+
+- **Grid:** every station x every passenger-service hour (6am-1am, Sundays from 8am), 1.5 million rows. Target = 1 if a 5+ minute delay was logged (closures excluded). Only 0.9% of rows are delays, so the score is AUC, not accuracy.
+- **Features:** station, line, hour, weekday, month, a first-hour-of-service flag, temperature, precipitation, snowfall, wind.
+- **Honest test:** trained on 2023-2024, tested on all of 2025, which the model never saw.
+
+| Model | AUC (2025) | Riskiest 10% of hours catch |
+|---|---|---|
+| Always predict the average | 0.500 | 10% of delays |
+| Historical rate lookup (station x hour x day type) | 0.629 | 23% |
+| Logistic regression | 0.650 | 23% |
+| Gradient boosting | 0.651 | 23% |
+
+![Risk groups](figures/06_model_risk_groups.png)
+
+**What this means**
+- The model ranks risk well: its riskiest 10% of station-hours had **5x the delay rate** of its safest 10% (2.1% vs 0.4%), and its predicted probabilities match the real rates closely.
+- But an AUC of 0.65 is modest, and that is the finding: most delays (disorderly passengers, ill customers, people on the track) are close to random at the level of one station in one hour. The model predicts *risk*, not incidents.
+- **Station** carries almost all the signal, then first hour of service, hour and weekday. **Weather adds almost nothing** once those are known.
+- A simple lookup table gets most of the way (0.629). Machine learning adds a small, real gain, which is worth saying plainly.
+- At the **line level** (any 5+ minute delay on Line 1, 2 or 4 in an hour) the same approach reaches **AUC 0.72**: the network is more predictable than any one station.
 
 ## Cleaning the data
 
@@ -36,6 +60,8 @@ The raw files needed real work before analysis:
 pip install -r requirements.txt
 python src/clean.py data_raw    # writes data/delays_clean.parquet
 python src/eda.py               # writes the charts to figures/
+python src/model.py 2024 2025   # train on 2023-2024, test on 2025
+cd src && python plot_model.py  # model charts
 ```
 
 ## Data sources
@@ -45,5 +71,5 @@ python src/eda.py               # writes the charts to figures/
 
 ## Next
 
-- Predict the chance of a 5+ minute delay by station, hour, weekday and weather; train on 2023-2025, test on 2026.
+- Re-run with 2026 weather: train on 2023-2025, test on 2026.
 - A small app: pick a station and time, get the delay risk.

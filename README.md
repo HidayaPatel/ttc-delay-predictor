@@ -2,6 +2,8 @@
 
 How likely is a delay on the Toronto subway, at this station, at this hour, in this weather?
 
+> **Result:** gradient boosting, tested on a full unseen year (2025), reaches **AUC 0.65**. Its riskiest 10% of station-hours had **5x the delay rate** of its safest 10%. Best features: **station**, first hour of service, hour of day. Weather adds almost nothing.
+
 This project uses every delay the TTC logged from January 2023 to September 2026 (97,227 incidents, City of Toronto Open Data) plus hourly Toronto weather (Open-Meteo) to find out where and when delays happen, and to predict the risk of a delay of 5 minutes or more.
 
 **Status: in progress.** Data cleaning, exploration and a first model are done; the app is next.

@@ -66,7 +66,7 @@ PREFIXES = sorted(STATIONS, key=len, reverse=True)
 
 CAUSE_GROUPS = {
     "EU": "Train equipment", "ER": "Train equipment",
-    "MU": "Passengers & general", "MR": "Passengers & general",
+    "MU": "Passenger & miscellaneous", "MR": "Passenger & miscellaneous",
     "PU": "Track, signals & power", "PR": "Track, signals & power",
     "SU": "Security", "SR": "Security",
     "TU": "Operations & staff", "TR": "Operations & staff",
@@ -85,7 +85,7 @@ def match_station(raw: str):
     s = norm_text(raw)
     if re.search(r"\b(YARD|CARHOUSE|HOSTLER|SHOP|BUILD UP|TRACK PLANT)\b", s):
         return None, "yard"
-    if s.startswith(("LINE ", "BLOOR DANFORTH", "YONGE UNIVERSITY", "YONGE-UNIVERSITY",
+    if s.startswith(("LINE ", "BLOOR DANFORTH", "BLOOR-DANFORTH", "YONGE UNIVERSITY", "YONGE-UNIVERSITY",
                      "TORONTO TRANSIT", "YU ", "BD ")):
         return None, "line-wide"
     for p in PREFIXES:

@@ -71,7 +71,7 @@ def causes(dl):
         ax.text(v + 0.6, y, f"{v:.0f}%", va="center", color=INK2, fontsize=9)
     ax.set(xlabel="Share of all delay minutes (%)", xlim=(0, 40))
     ax.grid(axis="y", visible=False)
-    ax.set_title("Two thirds of lost time is people, not machines")
+    ax.set_title("Passenger, security and misc. incidents: two thirds of lost time")
     fig.tight_layout(); fig.savefig(FIG / "03_causes.png", dpi=160); plt.close(fig)
 
 

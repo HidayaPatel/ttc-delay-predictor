@@ -14,7 +14,7 @@ This project uses every delay the TTC logged from January 2023 to September 2026
 
 - **Two daily peaks:** when service starts (6am weekdays, 8am Sundays) and the evening rush, 4-6pm, strongest Tuesday to Thursday.
 - **Bloor-Yonge loses the most time** (about 12,000 delay minutes), followed by Kennedy, St George and Kipling: interchange and end-of-line stations.
-- **Two thirds of lost time is caused by people, not machines:** passenger incidents (34%) and security incidents (33%). Track, signals and power are 18%.
+- **Two thirds of lost time comes from passenger, security and miscellaneous incidents** (34% and 33%), such as ill customers, disorderly passengers and people at track level. Track, signals and power are 18%; train equipment only 8%. (The TTC's "miscellaneous" codes are mostly passenger incidents but include some others, such as fires at track level.)
 - **Weather matters less than expected:** rain barely changes the delay rate (+4%); heavy snow (+37%) and deep cold (+31%) raise it, though heavy-snow hours are rare (41 hours).
 
 More charts are in [`figures/`](figures/).
@@ -57,6 +57,7 @@ The raw files needed real work before analysis:
 |---|---|
 | Station is free text cut at 22 characters: 1,687 spellings of about 75 stations | Longest-prefix matching to a list of real stations; 96% of incidents matched |
 | Stations renamed mid-period: Dundas to TMU (2024), Eglinton West to Cedarvale (2025) | Mapped old names to current ones |
+| Line-wide incidents written as a station ("BLOOR-DANFORTH LINE 2") | Flagged as line-wide, not assigned to a station |
 | Line field has 40+ spellings ("YU/BD", "YU / BD", "999") | Rule-based normalisation to Line 1, 2, 3, 4 or multi-line |
 | 65% of incidents have a 0-minute delay | Treated as logged events, not delays |
 | Planned closures logged as one 6+ hour "delay" | Flagged and excluded from delay statistics |

@@ -6,7 +6,7 @@ How likely is a delay on the Toronto subway, at this station, at this hour, in t
 
 This project uses every delay the TTC logged from January 2023 to September 2026 (97,227 incidents, City of Toronto Open Data) plus hourly Toronto weather (Open-Meteo) to find out where and when delays happen, and to predict the risk of a delay of 5 minutes or more.
 
-**Status: in progress.** Data cleaning, exploration and a first model are done; the app is next.
+**Try it:** pick a station, day, hour and weather and see the delay risk: `streamlit run app/app.py` (live link coming soon).
 
 ## First findings
 
@@ -43,6 +43,12 @@ More charts are in [`figures/`](figures/).
 - A simple lookup table gets most of the way (0.622). Machine learning adds a small, real gain, which is worth saying plainly.
 - At the **line level** (any 5+ minute delay on Line 1, 2 or 4 in an hour) the same approach reaches **AUC 0.72** on 2026: the network is more predictable than any one station.
 
+## The app
+
+`app/app.py` is a Streamlit app: choose a station, day, hour, month and weather and it shows the chance of a 5+ minute delay, how that compares with an average station-hour, the risk for the whole line, the risk through the day, and the riskiest stations at that time.
+
+The app never trains anything. `src/build_app_table.py` retrains the model on all the data and saves its predictions for every station x day x hour x month x weather combination (464K rows, 1.5 MB), and the app looks them up. Heavy snow and deep cold are rare in the data, so the model's weather effects are unstable in rare combinations; the app applies each weather scenario as one average adjustment measured from the data instead (heavy snow raises the odds of a delay by about 1.4x).
+
 ## Cleaning the data
 
 The raw files needed real work before analysis:
@@ -64,6 +70,8 @@ python src/clean.py data_raw    # writes data/delays_clean.parquet
 python src/eda.py               # writes the charts to figures/
 python src/model.py 2025 2026   # train on 2023-2025, test on 2026
 cd src && python plot_model.py  # model charts
+python build_app_table.py       # (from src/) precompute the app's risk tables
+cd .. && streamlit run app/app.py
 ```
 
 ## Data sources
@@ -73,4 +81,5 @@ cd src && python plot_model.py  # model charts
 
 ## Next
 
-- A small app: pick a station and time, get the delay risk.
+- Deploy the app on Streamlit Community Cloud.
+- Add the bus and streetcar delay data.

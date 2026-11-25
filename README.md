@@ -6,7 +6,7 @@ How likely is a delay on the Toronto subway, at this station, at this hour, in t
 
 This project uses every delay the TTC logged from January 2023 to September 2026 (97,227 incidents, City of Toronto Open Data) plus hourly Toronto weather (Open-Meteo) to find out where and when delays happen, and to predict the risk of a delay of 5 minutes or more.
 
-**[▶ Try the live app](https://ttc-delay-risk-hidaya.streamlit.app/)**: pick a station, day, hour and weather and see the delay risk. pick a station, day, hour and weather, and see the delay risk: `streamlit run app/app.py` (live link coming soon).
+**[▶ Try the live app](https://ttc-delay-risk-hidaya.streamlit.app/)**: pick a station, day, hour and weather and see the delay risk. The app sleeps when idle, so it may ask you to wake it. To run it locally: `streamlit run app/app.py`.
 
 ## First findings
 
@@ -15,7 +15,7 @@ This project uses every delay the TTC logged from January 2023 to September 2026
 - **Two daily peaks:** when service starts (6am weekdays, 8am Sundays) and the evening rush, 4-6pm, strongest Tuesday to Thursday.
 - **Bloor-Yonge loses the most time** (about 12,000 delay minutes), followed by Kennedy, St George and Kipling: interchange and end-of-line stations.
 - **Two thirds of lost time comes from passenger, security and miscellaneous incidents** (34% and 33%), such as ill customers, disorderly passengers and people at track level. Track, signals and power are 18%; train equipment only 8%. (The TTC's "miscellaneous" codes are mostly passenger incidents but include some others, such as fires at track level.)
-- **Weather matters less than expected:** rain barely changes the delay rate (+4%); heavy snow (+37%) and deep cold (+31%) raise it, though heavy-snow hours are rare (41 hours).
+- **Weather matters less than expected:** rain or snow falling barely changes the delay rate (+5%); heavy snow (+65%) and deep cold (+35%) raise it, though heavy snow covers only 52 hours, so treat that figure as rough.
 
 More charts are in [`figures/`](figures/).
 
@@ -23,7 +23,7 @@ More charts are in [`figures/`](figures/).
 
 **Question:** at this station, in this hour, will there be a delay of 5+ minutes?
 
-- **Grid:** every station x every passenger-service hour (6am-1am, Sundays from 8am), 1.5 million rows. Target = 1 if a 5+ minute delay was logged (closures excluded). Only 0.9% of rows are delays, so the score is AUC, not accuracy.
+- **Grid:** every station x every passenger-service hour (6am-1am, Sundays from 8am), 1.9 million rows (1.5 million to train, 0.4 million to test). Target = 1 if a 5+ minute delay was logged (closures excluded). Only 0.9% of rows are delays, so the score is AUC, not accuracy.
 - **Features:** station, line, hour, weekday, month, a first-hour-of-service flag, temperature, precipitation, snowfall, wind.
 - **Honest test:** trained on 2023-2025, tested on January-September 2026, which the model never saw. An earlier run (train 2023-2024, test 2025) gave nearly the same result (AUC 0.651), so the result holds across years.
 
@@ -47,7 +47,7 @@ More charts are in [`figures/`](figures/).
 
 `app/app.py` is a Streamlit app: choose a station, day, hour, month and weather and it shows the chance of a 5+ minute delay, how that compares with an average station-hour, the risk for the whole line, the risk through the day, and the riskiest stations at that time.
 
-The app never trains anything. `src/build_app_table.py` retrains the model on all the data and saves its predictions for every station x day x hour x month x weather combination (464K rows, 1.5 MB), and the app looks them up. Heavy snow and deep cold are rare in the data, so the model's weather effects are unstable in rare combinations; the app applies each weather scenario as one average adjustment measured from the data instead (heavy snow raises the odds of a delay by about 1.4x).
+The app never trains anything. `src/build_app_table.py` retrains the model on all the data and saves its predictions for every station x day x hour x month x weather combination (464K rows, 1.5 MB), and the app looks them up. Heavy snow and deep cold are rare in the data, so the model's weather effects are unstable in rare combinations; the app applies each weather scenario as one average adjustment measured from the data instead (heavy snow raises the odds of a delay by about 1.3x).
 
 ## Cleaning the data
 
@@ -82,5 +82,4 @@ cd .. && streamlit run app/app.py
 
 ## Next
 
-- Deploy the app on Streamlit Community Cloud.
 - Add the bus and streetcar delay data.
